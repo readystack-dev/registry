@@ -1,0 +1,47 @@
+# ReadyStack Distribution (registry) configuration.
+# The image's default command is `registry serve /etc/distribution/config.yml`.
+#
+# Differences from the configuration upstream bakes into its own image
+# (cmd/registry/config-dev.yml, which has no authentication at all):
+#   - Authentication is ON (htpasswd). If /var/lib/registry/auth/htpasswd does not exist
+#     when the registry starts, the registry itself creates it with the user `docker` and a
+#     random password, and prints that password once to the container log
+#     (registry/auth/htpasswd/access.go createHtpasswdFile). Nothing is baked into the image.
+#   - The debug listener (Prometheus /metrics, /debug/health, and Go pprof + expvar under
+#     /debug/) binds to the container's loopback only, as upstream's own configuration
+#     reference shows (`addr: localhost:5001`), not to every interface.
+#   - Log level info, not debug.
+# Basic authentication sends the password with every request: put TLS in front before
+# exposing port 5000 beyond localhost (REGISTRY_HTTP_TLS_CERTIFICATE / REGISTRY_HTTP_TLS_KEY).
+version: 0.1
+log:
+  level: info
+  fields:
+    service: registry
+storage:
+  filesystem:
+    rootdirectory: /var/lib/registry
+  delete:
+    enabled: true
+  cache:
+    blobdescriptor: inmemory
+  tag:
+    concurrencylimit: 8
+http:
+  addr: :5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+  debug:
+    addr: 127.0.0.1:5001
+    prometheus:
+      enabled: true
+      path: /metrics
+auth:
+  htpasswd:
+    realm: Registry
+    path: /var/lib/registry/auth/htpasswd
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3

@@ -1,0 +1,109 @@
+{
+  "apt_refresh": [
+    {
+      "min_version": "2.8.4ubuntu0.1",
+      "package": "apt",
+      "reason": "CVE-2026-109518: apt 2.8.3 -> 2.8.4ubuntu0.1"
+    },
+    {
+      "min_version": "2.8.4ubuntu0.1",
+      "package": "libapt-pkg6.0t64",
+      "reason": "CVE-2026-109518: libapt-pkg6.0t64 2.8.3 -> 2.8.4ubuntu0.1"
+    },
+    {
+      "min_version": "10.42-4ubuntu2.2",
+      "package": "libpcre2-8-0",
+      "reason": "CVE-2026-103111, CVE-2026-86145, CVE-2026-89156, CVE-2026-89157 \u2026: libpcre2-8-0 10.42-4ubuntu2.1 -> 10.42-4ubuntu2.2"
+    },
+    {
+      "min_version": "2.39-0ubuntu8.12",
+      "package": "libc6",
+      "reason": "CVE-2026-18374, CVE-2026-84243, CVE-2026-8674, CVE-2026-86805 \u2026: libc6 2.39-0ubuntu8.9 -> 2.39-0ubuntu8.12"
+    }
+  ],
+  "binaries_from_component_images": [],
+  "binaries_from_source": [
+    {
+      "build_flags": [
+        "-trimpath"
+      ],
+      "build_tags": [],
+      "cgo_enabled": 0,
+      "ldflags": "-s -w -X github.com/distribution/distribution/v3/version.version=@VERSION_BARE@ -X github.com/distribution/distribution/v3/version.revision=@COMMIT@ -X github.com/distribution/distribution/v3/version.mainpkg=github.com/distribution/distribution/v3",
+      "main_pkg": "./cmd/registry",
+      "name": "registry",
+      "out_path": "/usr/bin/registry",
+      "verify_contains": "v3 @VERSION_BARE@",
+      "verify_subcmd": "--version"
+    }
+  ],
+  "build_method": "source-rebuild-go",
+  "chain_id": 1002,
+  "dep_bumps": [
+    {
+      "module": "github.com/klauspost/compress",
+      "to": "v1.20.2",
+      "why": "GO-2026-6865: github.com/klauspost/compress v1.18.7 -> 1.20.2 (was v1.18.7)"
+    },
+    {
+      "module": "golang.org/x/net",
+      "to": "v0.62.0",
+      "why": "GO-2026-6860, GO-2026-6866: golang.org/x/net v0.60.0 -> 0.62.0 (was v0.60.0)"
+    },
+    {
+      "module": "github.com/go-jose/go-jose/v4",
+      "to": "v4.1.6",
+      "why": "GHSA-mgcc-cww5-fp2q / CVE-2026-116587 (high, published 2026-10-27): github.com/go-jose/go-jose/v4 v4.1.4 -> v4.1.6 (scripts/cve-floor.py)"
+    }
+  ],
+  "expected_residuals": [],
+  "images": [
+    {
+      "digest": "sha256:dc40a13b61304647ed7e5d581d246b86413dfc29d63c6d018310feb93cd98fc0",
+      "ref": "golang:1.26.11-bookworm",
+      "role": "builder"
+    },
+    {
+      "digest": "sha256:dc40a13b61304647ed7e5d581d246b86413dfc29d63c6d018310feb93cd98fc0",
+      "ref": "golang:1.26.11-bookworm",
+      "role": "offline_builder"
+    },
+    {
+      "digest": "sha256:2198e4c65076e9cb0b3d695219df667c0e3b0072da64ca3c2648aca17dcecaf5",
+      "ref": "ubuntu:24.04",
+      "role": "base"
+    }
+  ],
+  "mod_replaces": [],
+  "runtime_base": {
+    "kind": "chisel",
+    "provides": [
+      "gzip"
+    ],
+    "shell": true,
+    "slices": [
+      "gzip_bins"
+    ],
+    "tools": [
+      "tar",
+      "chown",
+      "ls"
+    ]
+  },
+  "schema": "kitforge.toolchain_lock.v1",
+  "slug": "registry",
+  "source": {
+    "builder_image": "golang:1.26.11-bookworm",
+    "commit": "3220848f15d9279c66a41aa0a257469e6aede1e9",
+    "commit_epoch": 1790250209,
+    "go_module_root": "github.com/distribution/distribution/v3",
+    "go_version_required": "1.26.0",
+    "ref": "v3.1.2",
+    "repo": "https://github.com/distribution/distribution",
+    "source_date_epoch": 1794448328,
+    "source_date_epoch_basis": "release-cut",
+    "source_date_epoch_provenance": "the time release v3.1.2-CE-ubuntu24.04-r9 was cut (2026-11-12T01:52:08Z), by scripts/retarget.py --rev-bump: ReadyStack dates an image by when its release was packaged (owner 2026-11-10), recorded here once and used by every rebuild of the release; it builds upstream commit 3220848f15d9, dated 2026-09-24T11:43:29Z (source.commit_epoch).",
+    "vendor_committed": true
+  },
+  "version": "v3.1.2"
+}

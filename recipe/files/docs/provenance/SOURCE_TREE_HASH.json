@@ -1,0 +1,9 @@
+{
+  "schema": "kitforge.source_tree_hash.v1",
+  "slug": "registry",
+  "repo": "https://github.com/distribution/distribution",
+  "ref": "v3.1.2",
+  "commit": "3220848f15d9279c66a41aa0a257469e6aede1e9",
+  "tree_listing_sha256": "b7cd43949374362404d0782d67aca2c20279b89570b5d1401291180757d4d899",
+  "file_count": 4599
+}

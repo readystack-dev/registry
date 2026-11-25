@@ -1,0 +1,6 @@
+image_manifest_digest=sha256:dca8a7c5e1e86d2d12c48988f307f8525f13a2fe51545f201dcee799f756ca63
+config_digest=sha256:f16cd0f7a88ef461a5fecd1295be017183ef65be49f04b553d0f2ebf4b67f4ea
+tag=readystack/registry:v3.1.2-CE-ubuntu24.04-r9
+probe_port=5000
+probe_path=/
+probe_timeout=180

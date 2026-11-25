@@ -1,0 +1,72 @@
+{
+  "schema": "kitforge.build_recipe.v1",
+  "slug": "registry",
+  "image": "readystack/registry:v3.1.2-CE-ubuntu24.04-r9",
+  "build_method": "source-rebuild-go",
+  "source": {
+    "repo": "https://github.com/distribution/distribution",
+    "ref": "v3.1.2",
+    "builder_image": "golang:1.26.11-bookworm",
+    "go_module_root": "github.com/distribution/distribution/v3",
+    "go_version_required": "1.26.0",
+    "vendor_committed": true,
+    "_version_note": "v3.1.2 is the latest GA (GitHub release 2026-09-24; tags after it are none, v3.0.0 2025-04 / v3.1.0 2026-04 / v3.1.1 2026-05). go.mod says `go 1.26.0` with no toolchain line; upstream's own Dockerfile builds with GO_VERSION=1.26.8, and golang:1.26.9-bookworm is already in BASE_IMAGE_DIGESTS.lock (tempo, mimir, miniflux, temporal), so GOTOOLCHAIN=local compiles with no toolchain download. No go.work.",
+    "_vendor_note": "vendor/ is committed (vendor/modules.txt lists 110 modules) and upstream CI validates it (Makefile validate-vendor). vendor_committed keeps it byte-for-byte only while dep_bumps is empty; with the klauspost/compress floor present the renderer runs go mod tidy -e && go mod vendor so the floor actually reaches the build (checked 2026-10-04: the re-vendored modules.txt differs from upstream's only in klauspost/compress v1.18.4 -> v1.18.7). Since 2026-11-07 (r6) the strategy has three floors (klauspost/compress, golang.org/x/net, go-jose/v4); the modules the re-vendored tree changes against upstream's, measured for r6, are listed once in doc_facts.vendor_changes.",
+    "_licence_note": "LICENSE at the tag is Apache-2.0. Licence sweep of the 126 LICENSE/COPYING files under vendor/ at v3.1.2: 69 Apache-2.0, 29 BSD, 23 MIT, 2 MPL-2.0 (hashicorp/golang-lru), 1 ISC, 1 Unlicense (miniredis' gopher-json, test-only dependency), 1 CC-BY-SA-4.0 that covers opencontainers/go-digest's DOCUMENTATION only (its code LICENSE is Apache-2.0). No BUSL/SSPL/Elastic/Commons-Clause text anywhere. Distribution has no enterprise edition and no open-core split, so there is nothing to ee_strip.",
+    "commit": "3220848f15d9279c66a41aa0a257469e6aede1e9",
+    "source_date_epoch": 1794448328,
+    "source_date_epoch_provenance": "the time release v3.1.2-CE-ubuntu24.04-r9 was cut (2026-11-12T01:52:08Z), by scripts/retarget.py --rev-bump: ReadyStack dates an image by when its release was packaged (owner 2026-11-10), recorded here once and used by every rebuild of the release; it builds upstream commit 3220848f15d9, dated 2026-09-24T11:43:29Z (source.commit_epoch).",
+    "source_date_epoch_basis": "release-cut",
+    "commit_epoch": 1790250209
+  },
+  "binaries_from_source": [
+    {
+      "name": "registry",
+      "main_pkg": "./cmd/registry",
+      "cgo_enabled": 0,
+      "build_tags": [],
+      "build_flags": [
+        "-trimpath"
+      ],
+      "ldflags": "-s -w -X github.com/distribution/distribution/v3/version.version=@VERSION_BARE@ -X github.com/distribution/distribution/v3/version.revision=@COMMIT@ -X github.com/distribution/distribution/v3/version.mainpkg=github.com/distribution/distribution/v3",
+      "out_path": "/usr/bin/registry",
+      "verify_subcmd": "--version",
+      "verify_contains": "v3 @VERSION_BARE@",
+      "_ldflags_note": "Exactly upstream's release recipe: Dockerfile stage `version` (the docker-bake `artifact`/`image` targets that produce the GitHub release tarballs and the Hub image) stamps `-X ${PKG}/version.version=${VERSION#v} -X ${PKG}/version.revision=${REVISION} -X ${PKG}/version.mainpkg=${PKG}` with PKG=github.com/distribution/distribution/v3 and LDFLAGS=\"-s -w\", BUILDTAGS=\"\", CGO_ENABLED=0, -trimpath, static. The version is the tag WITHOUT its leading v (3.1.2), the revision the full commit. The variables live in version/version.go of the /v3 module. The Makefile's -buildmode=pie + `-extldflags -Wl,-z,now` path is the developer build, not the release one, and needs cgo-free PIE support we do not want to depend on; we follow the Dockerfile.",
+      "_verify_note": "verify_contains is `v3 <bare version>` and NOT the bare version on purpose. version/version.go carries a hand-set default `v3.1.2+unknown` (bumped by hand at each release), so a build whose -X path is wrong still prints 3.1.2 and a plain `3.1.2` check would PASS it - the openbao v2.0.0-HEAD failure mode, hidden. Only a real stamp prints `.../distribution/v3 3.1.2` (space, no v). Measured 2026-10-04 on the agent VM: correct ldflags -> `<argv0> github.com/distribution/distribution/v3 3.1.2` (grep -F 'v3 3.1.2' passes); -X path without /v3 -> `<argv0> github.com/distribution/distribution/v3 v3.1.2+unknown` (grep fails, build stops)."
+    }
+  ],
+  "runtime_packages": [
+    "base-files",
+    "base-passwd",
+    "ca-certificates",
+    "coreutils",
+    "dash",
+    "gzip",
+    "libacl1",
+    "libc6",
+    "libcap2",
+    "libpcre2-8-0",
+    "libselinux1",
+    "libssl3t64",
+    "openssl",
+    "tar",
+    "tzdata"
+  ],
+  "runtime_base": {
+    "kind": "chisel",
+    "shell": true,
+    "tools": [
+      "tar",
+      "chown",
+      "ls"
+    ],
+    "slices": [
+      "gzip_bins"
+    ],
+    "provides": [
+      "gzip"
+    ],
+    "packages": "vendored/chisel/packages.tsv"
+  }
+}
